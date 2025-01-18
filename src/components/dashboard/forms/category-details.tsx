@@ -1,6 +1,6 @@
 "use client";
 
-import {useEffect } from "react";
+// import {useEffect } from "react";
 import { Category } from "@prisma/client";
 import * as z from "zod";
 import { useForm } from "react-hook-form";
@@ -30,80 +30,48 @@ import { ImageUpload } from "../shared/image-upload";
 import { v4 } from "uuid";
 // import { useToast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
+import { upsertCategory } from "@/queries/category";
 
 interface CategoryDetailsProps {
   data?: Category;
 }
 
 export const CategoryDetails = ({ data }: CategoryDetailsProps) => {
-  // Initializing necessary hooks
-  // const { toast } = useToast(); // Hook for displaying toast messages
-  // const router = useRouter(); // Hook for routing
+  const router = useRouter();
 
-  // Form hook for managing form state and validation
   const form = useForm<z.infer<typeof CategoryFormSchema>>({
-    mode: "onChange", // Form validation mode
-    resolver: zodResolver(CategoryFormSchema), // Resolver for form validation
+    mode: "onChange",
+    resolver: zodResolver(CategoryFormSchema),
     defaultValues: {
-      // Setting default form values from data (if available)
-      name: data?.name,
+      name: data?.name || "",
       image: data?.image ? [{ url: data?.image }] : [],
-      url: data?.url,
-      featured: data?.featured,
+      url: data?.url || "",
+      featured: data?.featured || false,
     },
   });
 
-  // Loading status based on form submission
   const isLoading = form.formState.isSubmitting;
 
-  // Reset form values when data changes
-  useEffect(() => {
-    if (data) {
-      form.reset({
-        name: data?.name,
-        image: [{ url: data?.image }],
-        url: data?.url,
-        featured: data?.featured,
+  const onSubmit = async (values: z.infer<typeof CategoryFormSchema>) => {
+    try {
+      await upsertCategory({
+        id: data?.id ? data.id : v4(),
+        name: values.name,
+        image: values.image[0]?.url || "",
+        url: values.url,
+        featured: values.featured,
+        createdAt: new Date(),
+        updatedAt: new Date(),
       });
+
+      if (data?.id) {
+        router.refresh();
+      } else {
+        router.push("/dashboard/admin/categories");
+      }
+    } catch (error: any) {
+      console.log(error);
     }
-  }, [data, form]);
-
-  // Submit handler for form submission
-  const handleSubmit = async (values: z.infer<typeof CategoryFormSchema>) => {
-    console.log(values);
-    // try {
-    //   // Upserting category data
-    //   const response = await upsertCategory({
-    //     id: data?.id ? data.id : v4(),
-    //     name: values.name,
-    //     image: values.image[0].url,
-    //     url: values.url,
-    //     featured: values.featured,
-    //     createdAt: new Date(),
-    //     updatedAt: new Date(),
-    //   });
-
-    //   // Displaying success message
-    //   toast({
-    //     title: data?.id
-    //       ? "Category has been updated."
-    //       : `Congratulations! '${response?.name}' is now created.`,
-    //   });
-
-    //   // Redirect or Refresh data
-    //   if (data?.id) {
-    //     router.refresh();
-    //   } else {
-    //     router.push("/dashboard/admin/categories");
-    //   }
-    // } catch (error: any) {
-    //   // Handling form submission errors
-    //   toast({
-    //     variant: "destructive",
-    //     title: "Oops!",
-    //     description: error.toString(),
-    //   });
-    // }
   };
 
   return (
@@ -120,7 +88,7 @@ export const CategoryDetails = ({ data }: CategoryDetailsProps) => {
         <CardContent>
           <Form {...form}>
             <form
-              onSubmit={form.handleSubmit(handleSubmit)}
+              onSubmit={form.handleSubmit(onSubmit)}
               className="space-y-4"
             >
               <FormField
@@ -132,7 +100,7 @@ export const CategoryDetails = ({ data }: CategoryDetailsProps) => {
                       <ImageUpload
                         type="profile"
                         value={field.value.map((image) => image.url)}
-                        disabled={isLoading}
+                        // disabled={isLoading}
                         onChange={(url) => field.onChange([{ url }])}
                         onRemove={(url) =>
                           field.onChange([
@@ -148,7 +116,7 @@ export const CategoryDetails = ({ data }: CategoryDetailsProps) => {
                 )}
               />
               <FormField
-                disabled={isLoading}
+                // disabled={isLoading}
                 control={form.control}
                 name="name"
                 render={({ field }) => (
@@ -162,7 +130,7 @@ export const CategoryDetails = ({ data }: CategoryDetailsProps) => {
                 )}
               />
               <FormField
-                disabled={isLoading}
+                // disabled={isLoading}
                 control={form.control}
                 name="url"
                 render={({ field }) => (

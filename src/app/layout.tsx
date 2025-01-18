@@ -7,9 +7,9 @@ const barlowFont = Barlow({
   weight: ["500", "700"],
 });
 import { ThemeProvider } from "next-themes";
-import {
-  ClerkProvider
-} from '@clerk/nextjs'
+import { ClerkProvider } from "@clerk/nextjs";
+import ModalProvider from "@/providers/modal-provider";
+import { Toaster } from "@/components/ui/toaster";
 
 export const metadata: Metadata = {
   title: "GoShop",
@@ -26,13 +26,13 @@ export default function RootLayout({
       <html lang="en" suppressHydrationWarning>
         <body className={`${barlowFont.variable} antialiased`}>
           <ThemeProvider
-          attribute="class"
-          defaultTheme="light"
-          enableSystem
-          disableTransitionOnChange
-
-        >
-          {children}
+            attribute="class"
+            defaultTheme="light"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <ModalProvider>{children}</ModalProvider>
+            <Toaster />
           </ThemeProvider>
         </body>
       </html>

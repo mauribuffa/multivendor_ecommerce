@@ -58,6 +58,16 @@ export const upsertCategory = async (category: Category) => {
   }
 };
 
+export const getAllCategories = async () => {
+  const categories = await db.category.findMany({
+    orderBy: {
+      updatedAt: "desc",
+    },
+  });
+
+  return categories;
+};
+
 // export const getAllCategories = async (storeUrl?: string) => {
 //   let storeId: string | undefined;
 
@@ -91,6 +101,7 @@ export const upsertCategory = async (category: Category) => {
 //   });
 //   return categories;
 // }
+
 // export const getAllCategoriesForCategory = async (categoryId: string) =>
 //   const subCategories = await db.subCategory.findMany({
 //     where: {
@@ -102,27 +113,30 @@ export const upsertCategory = async (category: Category) => {
 //   });
 //   return subCategories;
 // }
-// export const getCategory = async (categoryId: string) =>
-//   if (!categoryId) throw new Error("Please provide category ID.");
-//   const category = await db.category.findUnique({
-//     where: {
-//       id: categoryId,
-//     },
-//   });
-//   return category;
-// }
-// export const deleteCategory = async (categoryId: string) =>
-//   const user = await currentUser();
-//   if (!user) throw new Error("Unauthenticated.");
-//   if (user.privateMetadata.role !== "ADMIN")
-//     throw new Error(
-//       "Unauthorized Access: Admin Privileges Required for Entry."
-//     );
-//   if (!categoryId) throw new Error("Please provide category ID.");
-//   const response = await db.category.delete({
-//     where: {
-//       id: categoryId,
-//     },
-//   });
-//   return response;
-// };
+
+export const getCategory = async (categoryId: string) => {
+  if (!categoryId) throw new Error("Please provide category ID.");
+  const category = await db.category.findUnique({
+    where: {
+      id: categoryId,
+    },
+  });
+  return category;
+};
+
+export const deleteCategory = async (categoryId: string) => {
+  const user = await currentUser();
+
+  if (!user) throw new Error("Unauthenticated.");
+  if (user.privateMetadata.role !== "ADMIN")
+    throw new Error(
+      "Unauthorized Access: Admin Privileges Required for Entry."
+    );
+  if (!categoryId) throw new Error("Please provide category ID.");
+  const response = await db.category.delete({
+    where: {
+      id: categoryId,
+    },
+  });
+  return response;
+};

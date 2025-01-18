@@ -26,7 +26,7 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-// import ImageUpload from "../shared/image-upload";
+import { ImageUpload } from "../shared/image-upload";
 import { v4 } from "uuid";
 // import { useToast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
@@ -123,7 +123,7 @@ export const CategoryDetails = ({ data }: CategoryDetailsProps) => {
               onSubmit={form.handleSubmit(handleSubmit)}
               className="space-y-4"
             >
-              {/* <FormField
+              <FormField
                 control={form.control}
                 name="image"
                 render={({ field }) => (
@@ -146,7 +146,7 @@ export const CategoryDetails = ({ data }: CategoryDetailsProps) => {
                     <FormMessage />
                   </FormItem>
                 )}
-              /> */}
+              />
               <FormField
                 disabled={isLoading}
                 control={form.control}

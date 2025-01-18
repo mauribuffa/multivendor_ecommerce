@@ -17,7 +17,7 @@ const AdminDashboardLayout = async ({ children }: AdminDashboardLayoutProps) => 
   }
 
   return (
-    <div className="w-full h-full">
+    <div className="w-full h-full flex">
       <Sidebar isAdmin></Sidebar>
       <div className="w-full ml-[300px]">
         <Header />
